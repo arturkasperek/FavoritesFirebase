@@ -1,0 +1,22 @@
+name: Test CI
+
+on:
+  push:
+    branches: [ master, staging ]
+  pull_request:
+    branches: [ master, staging ]
+
+jobs:
+  run-ts:
+    runs-on: ubuntu-latest
+    strategy:
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn tsc
+        env:
+          CI: true
