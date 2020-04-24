@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, ScrollView, View, Text} from 'react-native';
+import {StyleSheet, ScrollView, Text} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
