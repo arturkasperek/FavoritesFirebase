@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "182723145309",
+    "firebase_url": "https://favorites-e10ee.firebaseio.com",
+    "project_id": "favorites-e10ee",
+    "storage_bucket": "favorites-e10ee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:182723145309:android:5c14fa29a09d17c98e27b4",
+        "android_client_info": {
+          "package_name": "com.favoritesfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "182723145309-ao2ifs3kbaeb9pejmiifuqevbgous4sn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATXUaRsEyFQXrL0AVjRQaLsFCN0ZyY20s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "182723145309-ao2ifs3kbaeb9pejmiifuqevbgous4sn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
