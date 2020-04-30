@@ -2,8 +2,8 @@ import React, {useState, useRef, useEffect} from 'react';
 import debounce from 'lodash/debounce';
 import capitalize from 'lodash/capitalize';
 import {View, Text, Image, TextInput, ActivityIndicator} from 'react-native';
-import {EntertainmentItem, OMDbAPIResponse} from '../types/Types';
-import {OMDbItemToCommon} from '../utils/Utils';
+import {EntertainmentItem} from '../types/Types';
+import APIService from '../services/APIService';
 
 interface Props {}
 
@@ -15,22 +15,12 @@ const SearchWithPopup = ({}: Props) => {
   const [searchItems, setSearchItems] = useState<EntertainmentItem[]>([]);
   const makeQuery = async (searchVal: string) => {
     setQueryInRun(true);
-    console.log('a');
-    const resp = await fetch(
-      `http://www.omdbapi.com/?apikey=abf71dbc&s=${searchVal}`,
-    );
-    console.log('b');
-    const data = (await resp.json()) as OMDbAPIResponse;
+    const movieAndSeriesItems = await APIService.getDataFromOMDbAPI(searchVal);
+    const gamesItems = await APIService.getDataFromGiantBomb(searchVal);
 
     setQueryInRun(false);
 
-    if (data.Search) {
-      const items = data.Search.map(OMDbItemToCommon);
-
-      setSearchItems(items);
-    } else {
-      setSearchItems([]);
-    }
+    setSearchItems([...movieAndSeriesItems, ...gamesItems]);
   };
   const onSearch = (value: string) => {
     if (value.length < 4) {
