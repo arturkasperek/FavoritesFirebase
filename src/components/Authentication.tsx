@@ -22,35 +22,30 @@ const Authentication = ({children}: Props) => {
   const toggleLogin = () => {
     setActiveLogin(!activeLogin);
   };
-  const register = () => {
-    auth()
-      .createUserWithEmailAndPassword(registerEmail, registerPassword)
-      .then(() => {
-        console.log('User account created & signed in!');
-      })
-      .catch((error) => {
-        if (error.code === 'auth/email-already-in-use') {
-          console.log('That email address is already in use!');
-        }
+  const register = async () => {
+    try {
+      await auth().createUserWithEmailAndPassword(
+        registerEmail,
+        registerPassword,
+      );
+    } catch (e) {
+      if (e.code === 'auth/email-already-in-use') {
+        console.log('That email address is already in use!');
+      }
 
-        if (error.code === 'auth/invalid-email') {
-          console.log('That email address is invalid!');
-        }
+      if (e.code === 'auth/invalid-email') {
+        console.log('That email address is invalid!');
+      }
 
-        console.error(error);
-      });
+      console.error(e);
+    }
   };
-  const login = () => {
-    auth()
-      .signInWithEmailAndPassword(loginEmail, loginPassword)
-      .then(() => {
-        //TODO implement
-        console.log('Signed in !');
-      })
-      .catch((error) => {
-        //TODO implement
-        console.error(error);
-      });
+  const login = async () => {
+    try {
+      await auth().signInWithEmailAndPassword(loginEmail, loginPassword);
+    } catch (e) {
+      console.error(e);
+    }
   };
   const renderRegister = () => {
     return (
@@ -96,10 +91,7 @@ const Authentication = ({children}: Props) => {
             testID={'login-email'}
             placeholder={'Email'}
             value={loginEmail}
-            onChangeText={(arg) => {
-              console.log('email onChangeText', arg);
-              setLoginEmail(arg);
-            }}
+            onChangeText={setLoginEmail}
           />
         </View>
         <View>
@@ -126,7 +118,12 @@ const Authentication = ({children}: Props) => {
     return subscriber; // unsubscribe on unmount
   }, []);
 
-  if (initializing) return null;
+  if (initializing)
+    return (
+      <View>
+        <Text>Initializing ...</Text>
+      </View>
+    );
 
   if (!user) {
     return <View>{activeLogin ? renderLogin() : renderRegister()}</View>;

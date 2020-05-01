@@ -16,6 +16,8 @@ const mockUseEffect = () => {
   });
 };
 
+jest.useFakeTimers();
+
 describe('<Authentication />', () => {
   describe('when initializing is in progress', () => {
     it('should show initializing loader', () => {
@@ -24,7 +26,10 @@ describe('<Authentication />', () => {
           <Text />
         </Authentication>,
       );
-      expect(wrapper.children()).toHaveLength(0);
+      const initializingLabel = wrapper
+        .find('Text')
+        .findWhere((w) => w.text() === 'Initializing ...');
+      expect(initializingLabel.exists()).toBeTruthy();
     });
   });
 
