@@ -18,9 +18,9 @@ const mockUseEffect = () => {
 
 jest.useFakeTimers();
 
-describe('<Authentication />', () => {
+describe('Given <Authentication /> component', () => {
   describe('when initializing is in progress', () => {
-    it('should show initializing loader', () => {
+    it('then should show initializing loader', () => {
       const wrapper = Enzyme.shallow(
         <Authentication>
           <Text />
@@ -39,26 +39,11 @@ describe('<Authentication />', () => {
     });
 
     afterEach(() => {
+      auth().signOut();
       jest.clearAllMocks();
     });
 
-    it('should render children when user is authenticated', () => {
-      process.env.TESTS_FIREBASE_USER_LOGGED_IN = 'yes';
-      const wrapper = Enzyme.shallow(
-        <Authentication>
-          <Text testID={'test-children-item'} />
-        </Authentication>,
-      );
-      const childrenItem = wrapper.findWhere(
-        (node) => node.prop('testID') === 'test-children-item',
-      );
-
-      process.env.TESTS_FIREBASE_USER_LOGGED_IN = 'no';
-
-      expect(childrenItem.exists()).toBeTruthy();
-    });
-
-    it('should render login after initialization', () => {
+    it('then element should render login after initialization', () => {
       const wrapper = Enzyme.shallow(
         <Authentication>
           <Text />
@@ -71,7 +56,7 @@ describe('<Authentication />', () => {
       expect(loginHelloLabel.exists()).toBeTruthy();
     });
 
-    it('should be able to toggle register tab and toggle back to login tab', () => {
+    it('then user should be able to toggle register tab', () => {
       const wrapper = Enzyme.shallow(
         <Authentication>
           <Text />
@@ -86,6 +71,18 @@ describe('<Authentication />', () => {
         .findWhere((w) => w.text() === 'Register');
 
       expect(registerHelloLabel.exists()).toBeTruthy();
+    });
+
+    it('then user should be able to toggle register tab and toggle back to login tab', () => {
+      const wrapper = Enzyme.shallow(
+        <Authentication>
+          <Text />
+        </Authentication>,
+      );
+      const toggleRegisterItem = wrapper.findWhere(
+        (node) => node.prop('testID') === 'toggle-register',
+      );
+      toggleRegisterItem.props().onPress();
 
       const toggleLoginItem = wrapper.findWhere(
         (node) => node.prop('testID') === 'toggle-login',
@@ -99,7 +96,7 @@ describe('<Authentication />', () => {
       expect(loginHelloLabel.exists()).toBeTruthy();
     });
 
-    it('should be able to login', () => {
+    it('then user should be able to login', () => {
       const wrapper = Enzyme.shallow(
         <Authentication>
           <Text />
@@ -126,7 +123,7 @@ describe('<Authentication />', () => {
       );
     });
 
-    it('should be able to register', () => {
+    it('then user should be able to register', () => {
       const wrapper = Enzyme.shallow(
         <Authentication>
           <Text />
@@ -156,6 +153,20 @@ describe('<Authentication />', () => {
         'some@gmail.com',
         'secret2',
       );
+    });
+
+    it('then element should render children when user is authenticated', () => {
+      auth().signInWithEmailAndPassword('asdsd', 'asdsadasd');
+      const wrapper = Enzyme.shallow(
+        <Authentication>
+          <Text testID={'test-children-item'} />
+        </Authentication>,
+      );
+      const childrenItem = wrapper.findWhere(
+        (node) => node.prop('testID') === 'test-children-item',
+      );
+
+      expect(childrenItem.exists()).toBeTruthy();
     });
   });
 });

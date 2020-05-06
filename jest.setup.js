@@ -14,16 +14,28 @@ jest.mock('@react-native-firebase/app', () => {
 }, { virtual: true });
 
 jest.mock('@react-native-firebase/auth', () => {
-  const mock = {
-    onAuthStateChanged: (func) => {
-      const user = process.env.TESTS_FIREBASE_USER_LOGGED_IN !== 'yes' ? undefined : {};
-      func(user);
-    },
-    createUserWithEmailAndPassword: jest.fn(() => Promise.resolve({})),
-    signInWithEmailAndPassword: jest.fn(() => Promise.resolve({})),
+  let userLoggedIn = false;
+  const createUserWithEmailAndPasswordMock = jest.fn(() => {
+    userLoggedIn = true;
+    return Promise.resolve({});
+  });
+  const signInWithEmailAndPasswordMock = jest.fn(() => {
+    userLoggedIn = true;
+    return Promise.resolve({});
+  });
+  return () => {
+    return {
+      onAuthStateChanged: (func) => {
+        const user = userLoggedIn ? {} : undefined;
+        func(user);
+      },
+      createUserWithEmailAndPassword: createUserWithEmailAndPasswordMock,
+      signInWithEmailAndPassword: signInWithEmailAndPasswordMock,
+      signOut: () => {
+        userLoggedIn = false;
+      }
+    };
   };
-
-  return () => mock;
 });
 
 jest.mock('@react-native-firebase/firestore', () => ({}));
