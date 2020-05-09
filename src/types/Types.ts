@@ -1,7 +1,19 @@
 export interface EntertainmentItem {
+  id: string;
   imageURL: string;
   title: string;
   type: 'movie' | 'series' | 'book' | 'game';
+}
+
+export interface FirebaseUser {
+  id: string;
+}
+
+export interface UserFirebaseDataShape {
+  [id: string]: {
+    watched: boolean;
+    data: EntertainmentItem;
+  }
 }
 
 export declare module OMDbProvider {

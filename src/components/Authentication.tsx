@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, Text, TextInput, Button} from 'react-native';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {GlobalStateContext} from '../GlobalStateContext';
 type User = FirebaseAuthTypes.User;
 
 export interface Props {
@@ -9,14 +11,18 @@ export interface Props {
 
 const Authentication = ({children}: Props) => {
   const [initializing, setInitializing] = React.useState(true);
-  const [user, setUser] = React.useState<User>();
   const [registerEmail, setRegisterEmail] = React.useState('');
   const [registerPassword, setRegisterPassword] = React.useState('');
   const [loginEmail, setLoginEmail] = React.useState('');
   const [loginPassword, setLoginPassword] = React.useState('');
   const [activeLogin, setActiveLogin] = React.useState(true);
+  const {setActiveUser, state: globalState} = useContext(GlobalStateContext);
   const onAuthStateChanged = (user: User | null) => {
-    setUser(user as User);
+    if (user) {
+      setActiveUser({
+        id: user!.uid,
+      });
+    }
     if (initializing) setInitializing(false);
   };
   const toggleLogin = () => {
@@ -24,10 +30,12 @@ const Authentication = ({children}: Props) => {
   };
   const register = async () => {
     try {
-      await auth().createUserWithEmailAndPassword(
+      const result = await auth().createUserWithEmailAndPassword(
         registerEmail,
         registerPassword,
       );
+
+      firestore().collection('users').doc(result.user.uid).set({});
     } catch (e) {
       if (e.code === 'auth/email-already-in-use') {
         console.log('That email address is already in use!');
@@ -71,7 +79,7 @@ const Authentication = ({children}: Props) => {
         <View>
           <Button
             testID={'register-submit'}
-            title={'Login'}
+            title={'Register'}
             onPress={register}
           />
         </View>
@@ -125,7 +133,7 @@ const Authentication = ({children}: Props) => {
       </View>
     );
 
-  if (!user) {
+  if (!globalState.user) {
     return <View>{activeLogin ? renderLogin() : renderRegister()}</View>;
   }
 

@@ -1,13 +1,23 @@
 import React, {useState, useRef, useEffect} from 'react';
 import debounce from 'lodash/debounce';
 import capitalize from 'lodash/capitalize';
-import {View, Text, Image, TextInput, ActivityIndicator} from 'react-native';
-import {EntertainmentItem} from '../types/Types';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  ActivityIndicator,
+  Button,
+} from 'react-native';
+import {EntertainmentItem, UserFirebaseDataShape} from '../types/Types';
 import APIService from '../services/APIService';
 
-interface Props {}
+interface Props {
+  toggleItemConsumption: (item: EntertainmentItem) => any;
+  userData: UserFirebaseDataShape;
+}
 
-const SearchWithPopup = ({}: Props) => {
+const SearchWithPopup = ({toggleItemConsumption}: Props) => {
   const isFirstRun = useRef(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [queryInRun, setQueryInRun] = useState(false);
@@ -29,6 +39,17 @@ const SearchWithPopup = ({}: Props) => {
     } else {
       setErrorMessage('');
       makeQuery(value);
+    }
+  };
+  const getItemLabel = (item: EntertainmentItem) => {
+    if (item.type === 'movie') {
+      return 'Obejrzane';
+    } else if (item.type === 'series') {
+      return 'Obejrzane';
+    } else if (item.type === 'book') {
+      return 'Przeczytane';
+    } else {
+      return 'Zagrane';
     }
   };
   const debouncedQuery = debounce(onSearch, 1000);
@@ -74,6 +95,13 @@ const SearchWithPopup = ({}: Props) => {
               </View>
               <View>
                 <Text>{capitalize(item.type)}</Text>
+              </View>
+              <View>
+                <Button
+                  title={'Toggle'}
+                  onPress={() => toggleItemConsumption(item)}
+                />
+                <Text>{getItemLabel(item)}</Text>
               </View>
             </View>
           ))}
