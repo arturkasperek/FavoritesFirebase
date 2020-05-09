@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {View, Text, TextInput, Button} from 'react-native';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {GlobalStateContext} from '../GlobalStateContext';
+import {GlobalStateContext} from '../global-state/GlobalStateContext';
 type User = FirebaseAuthTypes.User;
 
 export interface Props {
@@ -35,7 +35,7 @@ const Authentication = ({children}: Props) => {
         registerPassword,
       );
 
-      firestore().collection('users').doc(result.user.uid).set({});
+      await firestore().collection('users').doc(result.user.uid).set({});
     } catch (e) {
       if (e.code === 'auth/email-already-in-use') {
         console.log('That email address is already in use!');

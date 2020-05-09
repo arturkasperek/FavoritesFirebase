@@ -1,5 +1,5 @@
 import React from 'react';
-import {FirebaseUser} from "./types/Types";
+import {FirebaseUser} from "../types/Types";
 
 export interface IGlobalState {
   user?: FirebaseUser;

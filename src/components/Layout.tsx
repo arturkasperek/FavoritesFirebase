@@ -5,7 +5,7 @@ import {View, Button} from 'react-native';
 import SearchWithPopup from './SearchWithPopup';
 import FavoritesList from './FavoritesList';
 import {EntertainmentItem, UserFirebaseDataShape} from '../types/Types';
-import {GlobalStateContext} from '../GlobalStateContext';
+import {GlobalStateContext} from '../global-state/GlobalStateContext';
 
 interface Props {
   children: React.ReactNode;
