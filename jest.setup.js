@@ -14,19 +14,24 @@ jest.mock('@react-native-firebase/app', () => {
 }, { virtual: true });
 
 jest.mock('@react-native-firebase/auth', () => {
+  const userData = {
+    user: {
+      uid: 'sdf1234',
+    },
+  };
   let userLoggedIn = false;
   const createUserWithEmailAndPasswordMock = jest.fn(() => {
     userLoggedIn = true;
-    return Promise.resolve({});
+    return Promise.resolve(userData);
   });
   const signInWithEmailAndPasswordMock = jest.fn(() => {
     userLoggedIn = true;
-    return Promise.resolve({});
+    return Promise.resolve(userData);
   });
   return () => {
     return {
       onAuthStateChanged: (func) => {
-        const user = userLoggedIn ? {} : undefined;
+        const user = userLoggedIn ? userData : undefined;
         func(user);
       },
       createUserWithEmailAndPassword: createUserWithEmailAndPasswordMock,
@@ -38,4 +43,12 @@ jest.mock('@react-native-firebase/auth', () => {
   };
 });
 
-jest.mock('@react-native-firebase/firestore', () => ({}));
+jest.mock('@react-native-firebase/firestore', () => {
+  return () => ({
+    collection: () => ({
+      doc: () => ({
+        set: () => {},
+      })
+    })
+  });
+});

@@ -4,6 +4,7 @@ import {Text} from 'react-native';
 import Enzyme from 'enzyme';
 import auth from '@react-native-firebase/auth';
 import Authentication from '../../src/components/Authentication';
+import GlobalState from '../../src/global-state/GlobalState';
 
 const mockUseEffect = () => {
   let useEffectStarted = false;
@@ -158,9 +159,11 @@ describe('Given <Authentication /> component', () => {
     it('then element should render children when user is authenticated', () => {
       auth().signInWithEmailAndPassword('asdsd', 'asdsadasd');
       const wrapper = Enzyme.shallow(
-        <Authentication>
-          <Text testID={'test-children-item'} />
-        </Authentication>,
+        <GlobalState>
+          <Authentication>
+            <Text testID={'test-children-item'} />
+          </Authentication>
+        </GlobalState>,
       );
       const childrenItem = wrapper.findWhere(
         (node) => node.prop('testID') === 'test-children-item',
