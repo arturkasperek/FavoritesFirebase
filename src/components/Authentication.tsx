@@ -1,8 +1,10 @@
 import React, {useContext} from 'react';
-import {View, Text, TextInput, Button} from 'react-native';
+import {Button} from 'react-native-elements';
+import {View, Text, TextInput, StyleSheet} from 'react-native';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {GlobalStateContext} from '../global-state/GlobalStateContext';
+import globalStyles from '../styles/globalStyles';
 type User = FirebaseAuthTypes.User;
 
 export interface Props {
@@ -15,6 +17,8 @@ const Authentication = ({children}: Props) => {
   const [registerPassword, setRegisterPassword] = React.useState('');
   const [loginEmail, setLoginEmail] = React.useState('');
   const [loginPassword, setLoginPassword] = React.useState('');
+  const [loginError, setLoginError] = React.useState('');
+  const [registerError, setRegisterError] = React.useState('');
   const [activeLogin, setActiveLogin] = React.useState(true);
   const {setActiveUser, state: globalState} = useContext(GlobalStateContext);
   const onAuthStateChanged = (user: User | null) => {
@@ -29,6 +33,16 @@ const Authentication = ({children}: Props) => {
     setActiveLogin(!activeLogin);
   };
   const register = async () => {
+    if (!registerEmail) {
+      setRegisterError('Please set email!');
+      return;
+    }
+
+    if (!registerPassword) {
+      setRegisterError('Please set password!');
+      return;
+    }
+
     try {
       const result = await auth().createUserWithEmailAndPassword(
         registerEmail,
@@ -38,30 +52,52 @@ const Authentication = ({children}: Props) => {
       await firestore().collection('users').doc(result.user.uid).set({});
     } catch (e) {
       if (e.code === 'auth/email-already-in-use') {
-        console.log('That email address is already in use!');
+        setRegisterError('That email address is already in use!');
+      } else if (e.code === 'auth/invalid-email') {
+        setRegisterError('Invalid email!');
+      } else {
+        setRegisterError(e.message);
       }
-
-      if (e.code === 'auth/invalid-email') {
-        console.log('That email address is invalid!');
-      }
-
-      console.error(e);
     }
   };
   const login = async () => {
+    if (!loginEmail) {
+      setLoginError('Please set email!');
+      return;
+    }
+
+    if (!loginPassword) {
+      setLoginError('Please set password!');
+      return;
+    }
+
     try {
       await auth().signInWithEmailAndPassword(loginEmail, loginPassword);
+      setLoginError('');
     } catch (e) {
-      console.error(e);
+      console.log('dupa');
+      if (e.code === 'auth/invalid-email') {
+        setLoginError('Invalid email!');
+      } else if (e.code === 'auth/user-not-found') {
+        setLoginError('User not exists!');
+      } else if (e.code === 'auth/wrong-password') {
+        setLoginError('Wrong password!');
+      } else {
+        setLoginError(e.message);
+      }
     }
   };
   const renderRegister = () => {
     return (
       <View>
-        <Text>Register</Text>
+        <Text style={globalStyles.title}>Register</Text>
         <View>
           <TextInput
             testID={'register-email'}
+            style={{
+              ...globalStyles.input,
+              ...styles.input,
+            }}
             placeholder={'Email'}
             value={registerEmail}
             onChangeText={setRegisterEmail}
@@ -70,6 +106,10 @@ const Authentication = ({children}: Props) => {
         <View>
           <TextInput
             testID={'register-password'}
+            style={{
+              ...globalStyles.input,
+              ...styles.input,
+            }}
             placeholder={'Password'}
             secureTextEntry={true}
             value={registerPassword}
@@ -79,12 +119,18 @@ const Authentication = ({children}: Props) => {
         <View>
           <Button
             testID={'register-submit'}
+            buttonStyle={styles.button}
             title={'Register'}
             onPress={register}
           />
         </View>
+        {!!registerError && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorContainerText}>{registerError}</Text>
+          </View>
+        )}
         <Text testID="toggle-login" onPress={toggleLogin}>
-          Have a account? Login!
+          Have a account? <Text style={styles.bold}>Login!</Text>
         </Text>
       </View>
     );
@@ -93,10 +139,14 @@ const Authentication = ({children}: Props) => {
   const renderLogin = () => {
     return (
       <View>
-        <Text>Login</Text>
+        <Text style={globalStyles.title}>Login</Text>
         <View>
           <TextInput
             testID={'login-email'}
+            style={{
+              ...globalStyles.input,
+              ...styles.input,
+            }}
             placeholder={'Email'}
             value={loginEmail}
             onChangeText={setLoginEmail}
@@ -105,6 +155,10 @@ const Authentication = ({children}: Props) => {
         <View>
           <TextInput
             testID={'login-password'}
+            style={{
+              ...globalStyles.input,
+              ...styles.input,
+            }}
             placeholder={'Password'}
             secureTextEntry={true}
             value={loginPassword}
@@ -112,10 +166,20 @@ const Authentication = ({children}: Props) => {
           />
         </View>
         <View>
-          <Button testID={'login-submit'} title={'Login'} onPress={login} />
+          <Button
+            testID={'login-submit'}
+            buttonStyle={styles.button}
+            title={'Login'}
+            onPress={login}
+          />
         </View>
+        {!!loginError && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorContainerText}>{loginError}</Text>
+          </View>
+        )}
         <Text testID="toggle-register" onPress={toggleLogin}>
-          Don't have account? Register!
+          Don't have account? <Text style={styles.bold}>Register!</Text>
         </Text>
       </View>
     );
@@ -139,5 +203,21 @@ const Authentication = ({children}: Props) => {
 
   return <>{children}</>;
 };
+
+const styles = StyleSheet.create({
+  errorContainer: {},
+  errorContainerText: {
+    color: '#D50000',
+  },
+  input: {
+    marginBottom: 15,
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+  button: {
+    marginBottom: 20,
+  },
+});
 
 export default Authentication;
