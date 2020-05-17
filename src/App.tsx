@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, ScrollView, Text} from 'react-native';
+import {StyleSheet, ScrollView, Text, View} from 'react-native';
 import Authentication from './components/Authentication';
 import Layout from './components/Layout';
 import GlobalState from './global-state/GlobalState';
@@ -10,15 +10,15 @@ const App = () => {
   return (
     <>
       <GlobalState>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Authentication>
-            <Layout>
-              <Text>Welcome in App!</Text>
-            </Layout>
-          </Authentication>
-        </ScrollView>
+        <View style={styles.scrollView}>
+          <View style={styles.mainContainer}>
+            <Authentication>
+              <Layout>
+                <Text>Welcome in App!</Text>
+              </Layout>
+            </Authentication>
+          </View>
+        </View>
       </GlobalState>
     </>
   );
@@ -26,6 +26,12 @@ const App = () => {
 
 const styles = StyleSheet.create({
   scrollView: {},
+  mainContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+    marginLeft: 20,
+    marginRight: 20,
+  },
 });
 
 export default App;
