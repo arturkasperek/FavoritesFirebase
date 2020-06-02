@@ -190,13 +190,6 @@ const Authentication = ({children}: Props) => {
     return subscriber; // unsubscribe on unmount
   }, []);
 
-  if (initializing)
-    return (
-      <View>
-        <Text>Initializing ...</Text>
-      </View>
-    );
-
   if (!globalState.user) {
     return <View>{activeLogin ? renderLogin() : renderRegister()}</View>;
   }
