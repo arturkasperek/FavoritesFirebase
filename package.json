@@ -17,7 +17,7 @@
     "@types/enzyme": "^3.10.5",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/lodash": "^4.14.150",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "react": "16.11.0",
     "react-native": "0.62.2",
     "react-native-elements": "^2.0.0",
